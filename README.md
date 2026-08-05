@@ -527,7 +527,7 @@ curl -X POST http://localhost:8081/breadcrumbs -H 'Content-Type: application/jso
 Expected: Supervisor creates tasks → Researcher emits findings → Supervisor triggers Synthesizer → Synthesizer emits final → Supervisor patches the original `user_message` with `reply`.
 
 ### License
-Apache 2.0 (or your preferred license). Add a `LICENSE` file as appropriate.
+Apache License 2.0 - see [LICENSE](./LICENSE).
 
 
 David@XELNAGAv2 MINGW64 ~/Documents/GitHub/breadcrums/rcrt-visual-builder/apps/agent-runner (main)
