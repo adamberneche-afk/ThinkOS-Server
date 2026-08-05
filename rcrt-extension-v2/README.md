@@ -39,7 +39,7 @@ npm run build
 
 ## Architecture
 
-See [Design Document](../docs/RCRT_BROWSER_EXTENSION_V2_DESIGN.md) for complete architecture details.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for complete architecture details.
 
 ## Development
 

@@ -128,4 +128,4 @@ docker compose up -d --build
 
 ## Need Help?
 
-Check the detailed setup analysis: [SETUP_GAPS_AND_FIXES.md](./SETUP_GAPS_AND_FIXES.md)
+See [docs/README.md](./docs/README.md) for the full documentation index, or [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) for deployment troubleshooting.

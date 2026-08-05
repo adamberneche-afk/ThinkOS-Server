@@ -156,6 +156,4 @@ dist/
 **Status**: 🟢 Ready to use!
 
 For detailed documentation, see:
-- [Technical Spec](../docs/BROWSER_CONTEXT_BREADCRUMB.md)
 - [Quick Start](../examples/BROWSER_CONTEXT_QUICKSTART.md)
-- [Architecture](../docs/BROWSER_CONTEXT_ARCHITECTURE.md)

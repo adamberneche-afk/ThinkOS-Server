@@ -84,8 +84,6 @@ The extension uses a modern dark theme:
 
 ## Troubleshooting
 
-See the main [RCRT Chat Setup Guide](../RCRT_CHAT_SETUP_GUIDE.md) for detailed troubleshooting steps.
-
 ### Common Issues
 
 - **Connection Failed**: Ensure RCRT is running on `localhost:8081`

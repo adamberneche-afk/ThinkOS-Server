@@ -1,6 +1,6 @@
 ## RCRT – Right Context, Right Time
 
-> **✨ Fully Portable**: Supports custom container prefixes for multi-deployment environments. See [PORTABLE_SETUP_README.md](PORTABLE_SETUP_README.md)
+> **✨ Fully Portable**: Supports custom container prefixes for multi-deployment environments.
 
 **Quick Start**: 
 ```bash
@@ -415,7 +415,6 @@ Click "Seed Agentic Demo" → "Gaming" to see live UI updates via SSE as agents 
 **Reference:**
 - **[API Quick Reference](docs/QUICK_REFERENCE.md)** - API cheatsheet
 - **[Deployment Guide](docs/DEPLOYMENT.md)** - Setup and deployment
-- **[Tools Guide](docs/TOOLS_GUIDE.md)** - Create custom tools
 - **[Changelog](CHANGELOG.md)** - Version history
 
 **Component-Specific:**
