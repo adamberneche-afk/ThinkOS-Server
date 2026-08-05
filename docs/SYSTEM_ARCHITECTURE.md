@@ -12,7 +12,7 @@
 
 ### What is RCRT?
 
-**RCRT (Recursive Context & Reasoning Tree)** is a production-grade, event-driven AI agent coordination system with 9 microservices, validated architecture, and horizontal scalability.
+**RCRT (Right Context, Right Time)** is a production-grade, event-driven AI agent coordination system with 9 microservices, validated architecture, and horizontal scalability.
 
 **Core primitive:** Everything is a **breadcrumb** (versioned JSON packets in PostgreSQL with pgvector semantic search)
 
@@ -185,7 +185,7 @@ Tools = Data + Code
 
 ### The RCRT Way
 
-**RCRT (Recursive Context & Reasoning Tree)** is built on fundamental principles:
+**RCRT (Right Context, Right Time)** is built on fundamental principles:
 
 #### 1. **Breadcrumbs as Universal Data Structure**
 - Everything is a breadcrumb

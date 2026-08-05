@@ -1,3 +1,9 @@
+> **⚠️ Historical build-session snapshot (2025-11-04).** This doc is one of five same-day docs in `desktop-build/`
+> (`FINAL_INSTALLER.md`, `FINAL_STATUS.md`, `INSTALLER_READY.md`, `SUCCESS.md`, `START_HERE.md`) that record
+> conflicting installer sizes — this file claims **403MB**, while `FINAL_INSTALLER.md` claims **908MB** — and the
+> discrepancy was never reconciled. Treat the size figure below as unverified. For current setup instructions,
+> trust **`desktop-build/README.md`** instead.
+
 # 🎊 RCRT Desktop - MISSION COMPLETE!
 
 ## ✅ Final Installer

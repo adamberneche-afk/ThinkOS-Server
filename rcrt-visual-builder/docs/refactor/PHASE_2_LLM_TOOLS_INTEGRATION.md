@@ -1,5 +1,5 @@
 # Phase 2: LLM Tools Integration 🧠
-**Status: FOCUSED & PRACTICAL** 🎯
+**Status: 📋 PLANNED** (not started — depends on Phase 1; see [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md))
 
 ## Overview
 Make **OpenRouter and Ollama** available as **first-class tools** in RCRT, enabling supervisor agents to choose optimal LLMs for spawned workers. Keep base classes **simple but complete**.

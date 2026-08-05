@@ -75,7 +75,7 @@ That's it! One command builds everything.
 desktop-build/
 ├── build.sh                  # ← ONE BUILD COMMAND
 ├── podman/
-│   ├── podman-5.3.1-setup.exe (31MB)
+│   ├── podman-desktop-windows.exe (~235MB) # actual output of download-podman.sh — see Known Issues below
 │   ├── helium-windows.zip (370MB)
 │   └── images/               # Docker images (created by build)
 │       ├── rcrt.tar
@@ -92,6 +92,39 @@ desktop-build/
 └── dist/
     └── RCRT-Setup.exe ✅
 ```
+
+## ⚠️ Known Issue: build.sh existence-check never matches download-podman.sh output
+
+`build.sh` (Step 3) gates re-downloading on:
+
+```bash
+if [ ! -f "podman-5.3.1-setup.exe" ] || [ ! -f "helium-windows.zip" ]; then
+    ./download-podman.sh $PLATFORM
+fi
+```
+
+and `installers/windows/installer.nsi` packages `podman\podman-5.3.1-setup.exe` via its `File` directives (and references
+that same filename in the silent-install `ExecWait`/`Delete` calls).
+
+However, `podman/download-podman.sh` never produces a file with that name. It downloads Podman **Desktop** (the GUI
+installer, ~235MB) and saves it as `podman-desktop-windows.exe`:
+
+```bash
+"$BASE_URL/podman-desktop-${PODMAN_VERSION}-setup.exe" \
+"$SCRIPT_DIR/podman-desktop-windows.exe" \
+```
+
+Net effect:
+- `build.sh`'s existence-check for `podman-5.3.1-setup.exe` will **always** evaluate false (the file never exists under
+  that name), so the script will re-run `download-podman.sh` on every build, believing it's "missing" a file it never
+  actually produces.
+- `installer.nsi`'s `File "..\..\podman\podman-5.3.1-setup.exe"` directive will fail at NSIS compile time, since no file
+  by that name exists in `podman/` — only `podman-desktop-windows.exe` does.
+- This is a real bug in the build pipeline (a filename mismatch between the download script and both the build-gate
+  check and the installer script), not just stale documentation. It has not been fixed as of this writing; either
+  `download-podman.sh` needs to save to `podman-5.3.1-setup.exe` (and actually fetch the 31MB CLI-only installer if that
+  size/variant is truly what's wanted), or `build.sh` and `installer.nsi` need to be updated to reference
+  `podman-desktop-windows.exe` instead.
 
 ## 🎊 Why This Works
 

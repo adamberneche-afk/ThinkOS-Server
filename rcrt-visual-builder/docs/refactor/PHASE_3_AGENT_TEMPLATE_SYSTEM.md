@@ -1,5 +1,5 @@
 # Phase 3: Agent Template System 🤖
-**Status: FOCUSED ON SUPERVISOR → WORKER PATTERN** 🎯
+**Status: 📋 PLANNED** (not started — depends on Phase 2; see [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md))
 
 ## Overview
 Create **simple agent templates** that enable **supervisor agents** to spawn **temporary worker agents** with automatic **hygiene system cleanup**. Keep templates simple but powerful.

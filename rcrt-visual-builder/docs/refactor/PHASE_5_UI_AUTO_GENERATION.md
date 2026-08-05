@@ -1,5 +1,5 @@
 # Phase 5: Simple UI Creation for Agents 🎨
-**Status: PRACTICAL UI PATTERNS** 🎯
+**Status: 📋 PLANNED** (not started — depends on Phase 4; see [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md))
 
 ## Overview
 Enable agents to create **simple, functional UIs** when needed (chat boxes, progress displays, data tables). **Not autonomous UI generation engines** - just practical interface creation for agent communication.

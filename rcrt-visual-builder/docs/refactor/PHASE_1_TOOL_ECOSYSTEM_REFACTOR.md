@@ -1,5 +1,5 @@
 # Phase 1: Tool Ecosystem Foundation 🔧
-**Status: FOUNDATION COMPLETE** ✅
+**Status: 📋 PLANNED** (not started — see [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md))
 
 ## Overview  
 **Foundation is complete and stable.** Next: **expand LangChain tools** (the heart) and add **simple enable/disable** for large catalogs. 
