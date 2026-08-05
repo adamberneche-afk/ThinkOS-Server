@@ -5,7 +5,7 @@
 ## 🚀 Quick Build
 
 ```bash
-cd /d/ThinkOS-1/desktop-build
+cd /path/to/thinkos-server/desktop-build
 ./build.sh
 ```
 

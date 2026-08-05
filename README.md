@@ -528,13 +528,3 @@ Expected: Supervisor creates tasks → Researcher emits findings → Supervisor 
 
 ### License
 Apache License 2.0 - see [LICENSE](./LICENSE).
-
-
-David@XELNAGAv2 MINGW64 ~/Documents/GitHub/breadcrums/rcrt-visual-builder/apps/agent-runner (main)
-$ npm run dev 2>&1
-David@XELNAGAv2 MINGW64 ~/Documents/GitHub/breadcrums (main)
-$ cd rcrt-visual-builder/apps/builder && pnpm -s dev --port 3000 | cat
-
-cd rcrt-visual-builder && pnpm --filter @rcrt-builder/sdk build
-
-curl -s -X POST http://localhost:3000/api/auth/token -H "Content-Type: application/json" -d "{}"

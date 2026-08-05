@@ -28,6 +28,5 @@ jobs:
             --offline
             --no-progress
             --exclude-path node_modules
-            --exclude-path debug/debug.md
             '**/*.md'
           fail: true
