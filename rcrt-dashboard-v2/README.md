@@ -76,9 +76,9 @@ The **existing RCRT server is perfect!** It already provides:
 
 1. **Ensure RCRT is running**:
 ```bash
-# In the main breadcrums directory
+# In the repo root
 docker-compose up rcrt db nats -d
-# RCRT API available at http://localhost:8080
+# RCRT API available at http://localhost:8081 (docker-compose maps host 8081 -> container 8080)
 ```
 
 2. **Install and start frontend**:
@@ -87,7 +87,7 @@ cd rcrt-dashboard-v2/frontend
 npm install
 npm run dev
 # Frontend serves on http://localhost:5173
-# Automatically proxies API calls to RCRT at localhost:8080
+# Automatically proxies API calls to RCRT at localhost:8081
 ```
 
 3. **Visit the dashboard**:
@@ -150,8 +150,8 @@ eventSource.onmessage = (event) => {
 export default defineConfig({
   server: {
     proxy: {
-      '/api': 'http://localhost:8080',  // RCRT server
-      '/events': 'http://localhost:8080'
+      '/api': 'http://localhost:8081',  // RCRT server (host-mapped port; container listens on 8080)
+      '/events': 'http://localhost:8081'
     }
   }
 })
