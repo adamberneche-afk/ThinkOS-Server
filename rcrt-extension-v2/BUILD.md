@@ -31,7 +31,7 @@ dist/
 ├── manifest.json          # Extension manifest
 ├── background.js          # Service worker (tab tracking)
 ├── sidepanel.html        # Side panel HTML
-├── index-[hash].js       # Side panel React app
+├── sidepanel.js          # Side panel React app
 ├── chunks/               # Code-split chunks
 │   └── *.js
 ├── assets/               # CSS and other assets

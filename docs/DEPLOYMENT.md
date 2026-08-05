@@ -77,13 +77,14 @@ bash setup.sh
 
 ```yaml
 services:
-  postgres:      # Database with pgvector
-  nats:          # Message bus  
-  rcrt:          # Main RCRT server (Rust)
-  dashboard:     # Dashboard v2 (React)
-  tools-runner:  # Tool execution service
-  agent-runner:  # Agent execution service
-  bootstrap:     # Bootstrap loader (one-time)
+  db:              # Database with pgvector
+  nats:            # Message bus
+  rcrt:            # Main RCRT server (Rust)
+  builder:         # Visual Builder UI (Next.js)
+  tools-runner:    # Tool execution service
+  agent-runner:    # Agent execution service
+  context-builder: # Context builder service
+  dashboard:       # Dashboard v2 (React)
 ```
 
 ### Networking
@@ -125,11 +126,9 @@ AUTH_MODE=disabled
 # JWT_JWKS_URL=https://...
 
 # Embeddings (optional, defaults to ONNX)
-EMBED_PROVIDER=onnx
 EMBED_DIM=384
-# EMBED_PROVIDER=remote
-# EMBED_URL=https://api.openai.com/v1/embeddings
-# EMBED_API_KEY=sk-...
+EMBED_MODEL=/app/models/model.onnx
+EMBED_TOKENIZER=/app/models/tokenizer.json
 
 # Secrets (optional)
 LOCAL_KEK_BASE64=<base64-encoded-32-byte-key>

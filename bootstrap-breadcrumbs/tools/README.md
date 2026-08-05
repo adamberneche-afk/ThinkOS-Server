@@ -1,94 +1,74 @@
-# Tool Definitions - Moved to Tool Folders!
+# Tool Definitions - Moved to tools-self-contained/
 
-## 🎯 Clean Design Implemented
+## 🎯 Current Location
 
-Tools are now located WITH their implementations!
+Tool definitions live in `bootstrap-breadcrumbs/tools-self-contained/*.json`, one JSON file per tool. This `tools/` folder no longer holds any tool definitions — it exists only for this README.
 
-**New Location**: `rcrt-visual-builder/packages/tools/src/`
-
-Each tool has its own folder containing:
-- `definition.json` ← Bootstrap definition  
-- Implementation files ← Tool code
-- README.md (optional)
-- Tests (optional)
+Each tool file is a self-contained `tool.code.v1` breadcrumb: the tool's own TypeScript source lives inline in `context.code.source`, alongside its `input_schema`, `output_schema`, `permissions`, `limits`, and `examples`. There are no separate implementation folders or files to wire up.
 
 ## Structure
 
 ```
-rcrt-visual-builder/packages/tools/src/
-├── calculator/
-│   └── definition.json
-├── random/
-│   └── definition.json
-├── echo/
-│   └── definition.json
-├── timer/
-│   └── definition.json
-├── workflow/
-│   └── definition.json
-├── agent-helper/
-│   └── definition.json
-├── agent-loader/
-│   └── definition.json
-├── breadcrumb-crud/
-│   └── definition.json
-├── file-tools/
-│   ├── file-storage.ts
-│   └── definition.json
-├── context-tools/
-│   ├── context-builder-tool.ts
-│   └── definition.json
-├── browser-tools/
-│   ├── browser-context-capture-tool.ts
-│   └── definition.json
-└── llm-tools/
-    ├── openrouter.ts
-    ├── ollama.ts
-    ├── definition-openrouter.json
-    └── definition-ollama.json
+bootstrap-breadcrumbs/tools-self-contained/
+├── openrouter.json
+├── openrouter-models-sync.json
+├── ollama.json
+├── venice.json
+├── calculator.json
+├── random.json
+├── echo.json
+├── timer.json
+├── scheduler.json
+├── workflow.json
+├── json-transform.json
+├── breadcrumb-create.json
+└── breadcrumb-search.json
 ```
 
-## How Bootstrap Works
+## How Bootstrap Actually Works
 
-`bootstrap.js` now scans tool folders:
+Per `bootstrap.js`'s own top-of-file comment ("SINGLE SOURCE OF TRUTH") and its step 3 ("Loading self-contained tools"), it reads directly from this directory — it does **not** scan `rcrt-visual-builder/packages/tools/src/` for `*/definition.json` files:
 
 ```javascript
-// Scans: rcrt-visual-builder/packages/tools/src/
-// Finds: */definition.json files
-// Creates: tool.v1 breadcrumbs
-// Result: All tools auto-discovered!
+// bootstrap.js:
+// Tools: bootstrap-breadcrumbs/tools-self-contained/*.json (tool.code.v1)
+//
+// const selfContainedToolsDir = path.join(__dirname, 'tools-self-contained');
+// const toolFiles = fs.readdirSync(selfContainedToolsDir).filter(f => f.endsWith('.json'));
+// ...creates tool.code.v1 breadcrumbs from each file
 ```
 
 ## Adding a New Tool
 
 ```bash
-# 1. Create folder
-mkdir rcrt-visual-builder/packages/tools/src/my-tool
-
-# 2. Create definition.json
-cat > rcrt-visual-builder/packages/tools/src/my-tool/definition.json
+# 1. Create the tool definition (schema tool.code.v1)
+cat > bootstrap-breadcrumbs/tools-self-contained/my-tool.json << 'EOF'
 {
-  "schema_name": "tool.v1",
-  "title": "My Tool",
-  "tags": ["tool", "tool:my-tool", "workspace:tools"],
+  "schema_name": "tool.code.v1",
+  "title": "My Tool (Self-Contained)",
+  "description": "What this tool does",
+  "semantic_version": "1.0.0",
+  "tags": ["tool", "tool:my-tool", "workspace:tools", "self-contained"],
+  "llm_hints": {
+    "include": ["name", "description", "input_schema", "output_schema", "examples"],
+    "exclude": ["code", "permissions", "limits", "ui_schema"]
+  },
   "context": {
     "name": "my-tool",
-    "implementation": {
-      "folder": "my-tool"
+    "code": {
+      "language": "typescript",
+      "source": "export async function execute(input, context) {\n  return { result: '...' };\n}\n"
     },
-    "definition": {...}
+    "input_schema": {...},
+    "output_schema": {...},
+    "permissions": { "net": false, "read": false, "write": false, "env": false, "run": false, "ffi": false, "hrtime": false },
+    "limits": { "timeout_ms": 5000, "memory_mb": 32, "cpu_percent": 50 },
+    "examples": [...]
   }
 }
+EOF
 
-# 3. Create implementation
-cat > rcrt-visual-builder/packages/tools/src/my-tool/my-tool.ts
-export class MyTool {
-  async execute(input, context) {
-    return { result: '...' };
-  }
-}
-
-# 4. Bootstrap
+# 2. Bootstrap
 cd bootstrap-breadcrumbs && node bootstrap.js
 ```
 
@@ -96,10 +76,5 @@ cd bootstrap-breadcrumbs && node bootstrap.js
 
 ## See Full Documentation
 
-- Tool implementation: `rcrt-visual-builder/packages/tools/`
+- Tool definitions: `bootstrap-breadcrumbs/tools-self-contained/`
 - Bootstrap process: `bootstrap-breadcrumbs/bootstrap.js`
-- Clean design doc: `CLEAN_TOOL_DESIGN_IMPLEMENTED.md`
-
----
-
-**Tools are now with their code - the clean design you wanted!** ✅

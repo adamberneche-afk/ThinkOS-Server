@@ -1,5 +1,7 @@
 # Note Agents - Architectural Solution
 
+> **Status: Unimplemented proposal, not current behavior.** As of this writing, `crates/rcrt-context-builder/src/event_handler.rs` has no `note.v1` handling and no `assemble_note_context` method (it only handles `user.message.v1`), no `note-processor-agent.json` exists under `bootstrap-breadcrumbs/system/`, and the 4 "old" agents this doc says to delete (`note-tagger-agent.json`, `note-summarizer-agent.json`, `note-insights-agent.json`, `note-eli5-agent.json`) are still present and still bootstrapped. Treat everything below as a design proposal to evaluate/implement, not a description of what the system currently does.
+
 **Problem:** Note processing agents fail because they don't follow RCRT patterns  
 **Root Cause:** Trying to use agents for deterministic automation  
 **Solution:** Single intelligent agent with context-builder support

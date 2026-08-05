@@ -96,7 +96,7 @@ curl "http://localhost:8081/breadcrumbs?schema_name=note.v1"
 **Can't connect to RCRT?**
 ```bash
 # Start RCRT
-cd /path/to/ThinkOS-1
+cd /path/to/thinkos-server
 ./setup.sh
 ```
 

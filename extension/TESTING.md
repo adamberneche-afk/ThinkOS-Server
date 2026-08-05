@@ -16,7 +16,7 @@ The extension has been cleaned up and now **only uses RCRT** via the dashboard p
 3. **Load Unpacked Extension**:
    - Click "Load unpacked"
    - Select: `extension/dist/` folder
-   - Extension should appear with "ThinkOS Agent" name
+   - Extension should appear with "RCRT Chat" name
 
 ## 🔍 What to Expect
 
@@ -27,7 +27,7 @@ The extension has been cleaned up and now **only uses RCRT** via the dashboard p
 
 ### 🔧 Console Messages (Check Service Worker)
 ```
-🚀 RCRT Extension - Connecting to dashboard: http://localhost:3001
+🚀 RCRT Extension - Connecting to dashboard: http://localhost:8081
 ❌ RCRT dashboard not available: [error]
 ℹ️ Start RCRT dashboard (cargo run -p rcrt-dashboard) for full features
 📋 Extension will work with local storage until dashboard is available
@@ -50,7 +50,7 @@ cargo run
 
 **Expected Console Messages**:
 ```
-🚀 RCRT Extension - Connecting to dashboard: http://localhost:3001
+🚀 RCRT Extension - Connecting to dashboard: http://localhost:8081
 🔑 Fetching JWT token from RCRT dashboard...
 ✅ Got JWT token from RCRT dashboard
 🎯 Extension ready for RCRT integration
@@ -74,7 +74,7 @@ npm start
 - Check Chrome console for build errors
 
 ### Dashboard Connection Issues
-- Ensure dashboard runs on `localhost:3001`
+- Ensure dashboard runs on `localhost:8081`
 - Check CORS settings allow Chrome extension
 - Verify JWT token endpoint exists
 

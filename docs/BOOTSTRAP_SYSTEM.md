@@ -19,14 +19,19 @@ The RCRT bootstrap system provides a **single source of truth** for all system i
 │     ▼                                                            │
 │  bootstrap-breadcrumbs/bootstrap.js  ← THE ONLY BOOTSTRAP       │
 │     │                                                            │
-│     ├─→ system/*.json       (agents)                            │
-│     ├─→ tools/*.json         (tool definitions)                 │
-│     └─→ templates/*.json     (user templates)                   │
+│     ├─→ system/*.json              (agents, configs)            │
+│     ├─→ tools-self-contained/*.json (tool.code.v1 tools)        │
+│     ├─→ templates/*.json           (template library)           │
+│     ├─→ knowledge/*.json           (LLM semantic search)        │
+│     ├─→ schemas/*.json             (llm_hints for schemas)      │
+│     ├─→ themes/*.json              (theme.v1)                  │
+│     ├─→ pages/*.json               (ui.page.v1 / page.layout.v1)│
+│     └─→ states/*.json              (ui.state.v1)                │
 │                                                                  │
 │  Creates all breadcrumbs in RCRT database                       │
 │     │                                                            │
 │     ├─→ agent-runner auto-discovers agent.def.v1               │
-│     └─→ tools-runner auto-discovers tool.v1                    │
+│     └─→ tools-runner auto-discovers tool.code.v1                │
 │                                                                  │
 │  ✅ System ready!                                                │
 └─────────────────────────────────────────────────────────────────┘
@@ -39,28 +44,41 @@ bootstrap-breadcrumbs/
 ├── bootstrap.js                    # Main bootstrap script
 ├── package.json                    # Dependencies
 ├── README.md                       # Bootstrap docs
-├── system/                         # System breadcrumbs
+├── system/                         # System breadcrumbs (agents, configs)
 │   ├── default-chat-agent.json     # Default chat assistant
+│   ├── note-tagger-agent.json      # Note tagging agent
+│   ├── note-summarizer-agent.json  # Note summarizer agent
+│   ├── note-insights-agent.json    # Note insights agent
+│   ├── note-eli5-agent.json        # Note ELI5 agent
+│   ├── context-blacklist.json      # Context assembly blacklist
 │   └── bootstrap-marker.json       # Bootstrap completion marker
-├── tools/                          # Tool definitions (13 tools)
+├── tools-self-contained/           # Tool definitions (tool.code.v1, 13 tools)
 │   ├── openrouter.json
+│   ├── openrouter-models-sync.json
 │   ├── ollama.json
-│   ├── agent-helper.json
-│   ├── breadcrumb-crud.json
-│   ├── agent-loader.json
+│   ├── venice.json
 │   ├── calculator.json
 │   ├── random.json
 │   ├── echo.json
 │   ├── timer.json
-│   ├── context-builder.json
-│   ├── file-storage.json
-│   ├── browser-context-capture.json
+│   ├── scheduler.json
 │   ├── workflow.json
+│   ├── json-transform.json
+│   ├── breadcrumb-create.json
+│   └── breadcrumb-search.json
+├── tools/                          # README only (tools moved to tools-self-contained/)
 │   └── README.md
-└── templates/                      # Templates for users
-    ├── agent-definition-template.json
-    ├── tool-definition-template.json
-    └── llm-hints-guide.json
+├── templates/                      # Templates for users
+│   ├── agent-definition-template.json
+│   ├── base-agent.json
+│   ├── base-breadcrumb.json
+│   ├── base-tool.json
+│   └── llm-hints-guide.json
+├── knowledge/                      # knowledge.v1 breadcrumbs for LLM semantic search
+├── schemas/                        # schema.def.v1 breadcrumbs (llm_hints per schema)
+├── themes/                         # theme.v1 breadcrumbs
+├── pages/                          # ui.page.v1 / page.layout.v1 breadcrumbs
+└── states/                         # ui.state.v1 breadcrumbs
 ```
 
 ## How It Works
@@ -114,12 +132,14 @@ GET /breadcrumbs?schema_name=agent.def.v1
 
 **tools-runner** queries:
 ```
-GET /breadcrumbs?schema_name=tool.v1
+GET /breadcrumbs?schema_name=tool.code.v1
 ```
 
 No hardcoded registration needed!
 
 ## Tool System
+
+Tools live in `bootstrap-breadcrumbs/tools-self-contained/*.json` as self-contained `tool.code.v1` breadcrumbs. Each breadcrumb bundles the tool's own source code (executed in a Deno sandbox by tools-runner) alongside its schema and metadata — there is no separate implementation folder to wire up. The legacy `tools/` directory now contains only a `README.md` pointing here; it holds no tool definitions.
 
 ### Tool Definition Structure
 
@@ -127,113 +147,78 @@ Each tool is defined with:
 
 ```json
 {
-  "schema_name": "tool.v1",
-  "title": "Tool Name",
-  "tags": ["tool", "tool:name", "workspace:tools"],
+  "schema_name": "tool.code.v1",
+  "title": "Tool Name (Self-Contained)",
+  "description": "What this tool does",
+  "semantic_version": "2.0.0",
+  "tags": ["tool", "tool:name", "workspace:tools", "self-contained"],
+  "llm_hints": {
+    "include": ["name", "description", "input_schema", "output_schema", "examples"],
+    "exclude": ["code", "permissions", "limits", "ui_schema"]
+  },
   "context": {
     "name": "tool-name",
-    "description": "What this tool does",
-    "implementation": {
-      "type": "builtin",
-      "module": "@rcrt-builder/tools",
-      "export": "builtinTools['tool-name']"
+    "code": {
+      "language": "typescript",
+      "source": "export async function execute(input, context) { ... }"
     },
-    "definition": {
-      "input_schema": {
-        "type": "object",
-        "properties": {...},
-        "required": [...]
-      },
-      "output_schema": {
-        "type": "object",
-        "properties": {...}
-      }
+    "input_schema": {
+      "type": "object",
+      "properties": {...},
+      "required": [...]
     },
+    "output_schema": {
+      "type": "object",
+      "properties": {...}
+    },
+    "permissions": {
+      "net": false, "read": false, "write": false,
+      "env": false, "run": false, "ffi": false, "hrtime": false
+    },
+    "limits": {
+      "timeout_ms": 5000, "memory_mb": 32, "cpu_percent": 50
+    },
+    "required_secrets": [],
+    "ui_schema": { "configurable": false },
     "examples": [
       {
         "description": "Example usage",
         "input": {...},
-        "expected_output": {...}
+        "output": {...},
+        "explanation": "How to read the output"
       }
     ]
   }
 }
 ```
 
-### Breadcrumb Structure (v2.1.0)
+`description`, `semantic_version`, and `llm_hints` are top-level fields (not nested in `context`), per the v2.1.0 breadcrumb structure normalization.
 
-**Standard structure:**
-```json
-{
-  "schema_name": "tool.code.v1",
-  "title": "Tool Name",
-  "description": "What it does",        // NEW: Top-level
-  "semantic_version": "2.0.0",          // NEW: Top-level  
-  "tags": ["tool", "workspace:tools"],
-  "llm_hints": {                        // NEW: Top-level
-    "include": ["name", "description"],
-    "exclude": ["code"]
-  },
-  "context": {
-    // Schema-specific data only
-  }
-}
-```
-
-**See:** `bootstrap-breadcrumbs/templates/base-breadcrumb.json` for full specification
+**See:** `bootstrap-breadcrumbs/templates/base-tool.json` and `bootstrap-breadcrumbs/templates/base-breadcrumb.json` for full specification
 
 ### Complete Tool List
 
-1. **openrouter** - LLM API via OpenRouter
-2. **ollama** - Local LLM via Ollama
-3. **calculator** - Basic math operations
-4. **random** - Generate random numbers
-5. **echo** - Echo back input
-6. **timer** - Delay/timing operations
-7. **breadcrumb-crud** - Direct breadcrumb operations
-8. **breadcrumb-search** - Search breadcrumbs
-9. **json-transform** - JSON transformations
-10. **scheduler** - Schedule operations
-11. **venice** - Venice AI integration
-12. **workflow** - Workflow orchestration
-13. **openrouter-models-sync** - Sync model catalog
-11. **file-storage** - File operations
-12. **browser-context-capture** - Capture browser context
-13. **workflow** - Workflow orchestration
+The 13 tools currently in `tools-self-contained/`:
 
-### Tool Implementation Types
+1. **openrouter** - Access to 100+ LLM models via unified API
+2. **openrouter-models-sync** - Syncs the OpenRouter models catalog for dropdown selections
+3. **ollama** - Local LLM access via Ollama (fast, free, private)
+4. **venice** - Venice AI privacy-focused LLM access
+5. **calculator** - Mathematical calculations (arithmetic, parentheses, math functions)
+6. **random** - Random number generation
+7. **echo** - Returns input unchanged (testing)
+8. **timer** - Wait for a specified number of seconds
+9. **scheduler** - Monitors schedule definitions and publishes tick breadcrumbs for time-based automation
+10. **workflow** - Orchestrates multi-step tool operations with dependencies and variable interpolation
+11. **json-transform** - Transforms JSON data using JSONPath queries and mappings
+12. **breadcrumb-create** - Creates new breadcrumbs with schema, title, tags, and context
+13. **breadcrumb-search** - Searches and retrieves breadcrumbs by schema, tags, or semantic query
 
-**Builtin Tools**:
-```json
-{
-  "implementation": {
-    "type": "builtin",
-    "module": "@rcrt-builder/tools",
-    "export": "builtinTools['tool-name']"
-  }
-}
-```
+Note: `context-builder` is **not** one of these tool breadcrumbs. It is a separate Rust microservice (`crates/rcrt-context-builder`) that assembles agent context directly; it is not defined via a `tools-self-contained/*.json` file.
 
-**External Tools**:
-```json
-{
-  "implementation": {
-    "type": "external",
-    "url": "https://api.example.com/tool"
-  }
-}
-```
+### Tool Execution Model
 
-**Service Tools**:
-```json
-{
-  "implementation": {
-    "type": "service",
-    "service_name": "context-builder",
-    "endpoint": "/execute"
-  }
-}
-```
+Each tool breadcrumb embeds its own `code.source` (TypeScript), which tools-runner executes in a sandboxed Deno process governed by the breadcrumb's `permissions` and `limits`. There is no separate `builtin` / `external` / `service` implementation-type dispatch — the code and its declared permissions travel together in the same breadcrumb.
 
 ## Agent System
 

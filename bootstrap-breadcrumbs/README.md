@@ -7,7 +7,7 @@ This directory contains ALL breadcrumbs needed to bootstrap an RCRT system.
 ## ⚠️ IMPORTANT: No Hardcoding Policy
 
 - ✅ All agents defined in `system/*.json`
-- ✅ All tools defined in `tools/*.json`
+- ✅ All tools defined in `tools-self-contained/*.json`
 - ✅ All templates in `templates/*.json`
 - ❌ NO hardcoded fallbacks in code
 - ❌ NO duplicate definitions elsewhere
@@ -21,16 +21,39 @@ This directory contains ALL breadcrumbs needed to bootstrap an RCRT system.
 bootstrap-breadcrumbs/
 ├── system/                    # Core system breadcrumbs (agents, configs)
 │   ├── bootstrap-marker.json  # Marks system as bootstrapped
-│   └── default-chat-agent.json # THE ONLY agent definition (single source)
-├── tools/                     # Tool definitions (tool.v1)
-│   ├── openrouter.json        # OpenRouter LLM tool
-│   ├── calculator.json        # Calculator utility
-│   ├── random.json            # Random number generator
-│   ├── context-builder.json   # Context assembly tool
-│   └── ... (add more as JSON files, not code!)
-├── templates/                 # Templates for users to copy
+│   ├── context-blacklist.json # Context assembly blacklist
+│   ├── default-chat-agent.json    # Default chat assistant
+│   ├── note-tagger-agent.json     # Note tagging agent
+│   ├── note-summarizer-agent.json # Note summarizer agent
+│   ├── note-insights-agent.json   # Note insights agent
+│   └── note-eli5-agent.json       # Note ELI5 agent
+├── tools-self-contained/      # Tool definitions (tool.code.v1)
+│   ├── openrouter.json         # OpenRouter LLM tool
+│   ├── openrouter-models-sync.json # OpenRouter models catalog sync
+│   ├── ollama.json             # Local LLM via Ollama
+│   ├── venice.json             # Venice AI LLM tool
+│   ├── calculator.json         # Calculator utility
+│   ├── random.json             # Random number generator
+│   ├── echo.json                # Echo tool
+│   ├── timer.json               # Timer/delay tool
+│   ├── scheduler.json           # Schedule tick publisher
+│   ├── workflow.json            # Workflow orchestrator
+│   ├── json-transform.json      # JSON transformation tool
+│   ├── breadcrumb-create.json   # Breadcrumb creation tool
+│   └── breadcrumb-search.json   # Breadcrumb search tool
+├── tools/                      # README only - tool definitions live in tools-self-contained/
+│   └── README.md
+├── knowledge/                  # knowledge.v1 breadcrumbs for LLM semantic search
+├── schemas/                    # schema.def.v1 breadcrumbs (llm_hints per schema)
+├── pages/                       # ui.page.v1 / page.layout.v1 breadcrumbs
+├── states/                      # ui.state.v1 breadcrumbs
+├── themes/                      # theme.v1 breadcrumbs
+├── templates/                  # Templates for users to copy
 │   ├── agent-definition-template.json
-│   └── tool-definition-template.json
+│   ├── base-agent.json
+│   ├── base-breadcrumb.json
+│   ├── base-tool.json
+│   └── llm-hints-guide.json
 ├── bootstrap.js               # THE ONLY bootstrap script
 ├── package.json
 └── README.md                  # This file
@@ -44,10 +67,9 @@ bootstrap-breadcrumbs/
 3. Done! Agent is loaded
 
 ### Add a New Tool
-1. Create `tools/my-tool.json` with schema `tool.v1`
-2. Include implementation reference: `{"type": "builtin", "export": "builtinTools.mytool"}`
-3. Run: `cd bootstrap-breadcrumbs && node bootstrap.js`
-4. Done! Tool is available
+1. Create `tools-self-contained/my-tool.json` with schema `tool.code.v1`, including the tool's own `context.code.source`
+2. Run: `cd bootstrap-breadcrumbs && node bootstrap.js`
+3. Done! Tool is available
 
 ## New Tool System (RCRT-Native)
 
@@ -110,7 +132,7 @@ New system:
 
 ## Creating a New Tool
 
-1. Copy `tool-definition-template.json`
+1. Copy `templates/base-tool.json` (there is no `tool-definition-template.json` in `templates/` — see the actual files listed in the Directory Structure above)
 2. Fill in your tool's details
 3. Add examples showing output field access
 4. Create as `tool.v1` breadcrumb

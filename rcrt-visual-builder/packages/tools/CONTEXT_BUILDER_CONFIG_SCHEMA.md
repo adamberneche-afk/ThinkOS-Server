@@ -50,9 +50,9 @@ Just as openrouter has `tool.config.v1` breadcrumb for API keys and models, cont
     
     // HOW to format (configurable!)
     formatting: {
-      max_tokens: 4000,              // Token budget (1000-16000)
+      max_tokens: 400000,            // Token budget (bootstrapped default, sized for gemini-2.5-flash-lite's ~1M window)
       deduplication_threshold: 0.95, // Similarity (0.90-0.99)
-      include_metadata: false,       // Include timestamps/IDs
+      include_metadata: false,       // Declared but not currently read by assembleContext() — has no effect
       enable_summarization: false    // Future: LLM summarization
     },
     
@@ -103,14 +103,13 @@ Similarity threshold: [0.95] (0.80-0.99)
 
 ### **4. Token Budget**
 ```
-Max context tokens: [4000] (1000-16000)
-  Automatically trims if over budget
+Max context tokens: [400000] (bootstrapped default; enforceTokenBudget() trims when exceeded)
 ```
 
 ### **5. Advanced Options** (Collapsible)
 ```
 ☐ Include tool results
-☐ Include metadata (timestamps)
+☐ Include metadata (timestamps) — NOTE: not currently wired up; assembleContext() never reads formatting.include_metadata
 ☐ Enable summarization (future)
 ☐ Cache context (TTL: 3600s)
 ```
@@ -252,10 +251,10 @@ Max context tokens: [4000] (1000-16000)
 | **recent_agent_limit** | number | 0-10 | 2 | How many recent agent responses |
 | **vector_agent_nn** | number | 0-10 | 3 | How many semantic agent responses |
 | **tool_results_limit** | number | 0-10 | 3 | How many recent tool results |
-| **max_tokens** | number | 1000-16000 | 4000 | Token budget (auto-trim) |
+| **max_tokens** | number | no enforced range | 400000 | Token budget (auto-trim); bootstrapped default is sized for gemini-2.5-flash-lite's ~1M context window |
 | **dedup_threshold** | float | 0.80-0.99 | 0.95 | Similarity for deduplication |
 | **context_ttl** | number | 300-7200 | 3600 | How long to cache context (seconds) |
-| **include_timestamps** | boolean | - | false | Show message timestamps |
+| **include_timestamps** (`include_metadata`) | boolean | - | false | Declared in config but not read by `assembleContext()` — currently a no-op |
 | **enable_documents** | boolean | - | false | Include document.v1 vector search |
 
 **All stored in context.config.v1, editable via UI, changes take effect immediately!**

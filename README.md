@@ -251,10 +251,10 @@ All packages → @rcrt-builder/core (shared types)
 #### **File Locations Quick Reference**
 | SDK Package | Main Entry | Registry/Manager | Config |
 |-------------|------------|------------------|---------|
-| **Core** | `packages/sdk/src/index.ts` | - | - |
-| **Tools** | `packages/tools/src/index.ts` | `src/registry.ts` | `src/langchain.ts` |
-| **Runtime** | `packages/runtime/src/index.ts` | `src/runtime-manager.ts` | agent/flow executors |
-| **Node** | `packages/node-sdk/src/index.ts` | `src/registry.ts` | `src/dev-server.ts` |
+| **Core** | `rcrt-visual-builder/packages/sdk/src/index.ts` | - | - |
+| **Tools** | `rcrt-visual-builder/packages/tools/src/index.ts` | `src/registry.ts` | `src/langchain.ts` |
+| **Runtime** | `rcrt-visual-builder/packages/runtime/src/index.ts` | `src/runtime-manager.ts` | agent/flow executors |
+| **Node** | `rcrt-visual-builder/packages/node-sdk/src/index.ts` | `src/registry.ts` | `src/dev-server.ts` |
 
 #### **When to Use Which SDK**
 
@@ -359,8 +359,8 @@ Endpoints include breadcrumbs CRUD, history, vector search, selector subscriptio
 - Common environment variables:
 - **Database/Bus**: `DB_URL`, `NATS_URL`
 - **Auth**: `AUTH_MODE=jwt|disabled`, `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_JWKS_URL`
-- **Embeddings**: `EMBED_PROVIDER=onnx|remote`, `EMBED_DIM=384`, `EMBED_MODEL_PATH`, `EMBED_TOKENIZER_PATH`
-- **Secrets**: `LOCAL_KEK_BASE64` or cloud KMS config (`KEK_PROVIDER`, `KEK_REF`)
+- **Embeddings**: `EMBED_DIM=384`, `EMBED_MODEL`, `EMBED_TOKENIZER`
+- **Secrets**: `LOCAL_KEK_BASE64`
 - **Owner/Agent**: `OWNER_ID`, `AGENT_ID`
 
 ### Deployment

@@ -1,151 +1,80 @@
 # Tool System Implementation Guide
 
-## Current Code to Update
+> This file previously described a `RCRTToolWrapper` class (with `createToolBreadcrumb()` and
+> a registry `buildCatalogFromBreadcrumbs()` method) as an upcoming change. That plan was never
+> implemented — there is no `RCRTToolWrapper`, `createToolBreadcrumb`, or `buildCatalogFromBreadcrumbs`
+> anywhere in this package. The content below describes how tool loading actually works today.
 
-### 1. RCRTToolWrapper (index.ts)
-Currently has comment:
+## How tools actually load today
+
+Tools are backed by breadcrumbs of two schemas:
+
+- **`tool.code.v1`** (current, self-contained format): the breadcrumb carries its own code and
+  runs inside `DenoToolRuntime`. This is the format new tools should use.
+- **`tool.v1`** (legacy format): describes an `implementation` (builtin/module/http/breadcrumb/container)
+  that `ToolLoader` resolves to a runnable `RCRTTool`. Still supported for backward compatibility,
+  but `bootstrap-tools.ts` no longer creates these — see below.
+
+### Loading a tool: `ToolLoader` (`src/tool-loader.ts`)
+
 ```typescript
-// Tool definitions are now managed centrally by the ToolRegistry
-// Individual tools no longer publish separate definition breadcrumbs
+import { ToolLoader } from '@rcrt-builder/tools';
+
+const loader = new ToolLoader(client, 'workspace:tools');
+
+// By breadcrumb ID — tries tool.v1 vs tool.code.v1 based on schema_name
+const tool = await loader.loadToolFromBreadcrumb(breadcrumbId);
+
+// By name — searches tool.code.v1 first, falls back to tool.v1
+const tool2 = await loader.loadToolByName('file-storage');
+
+// Discover everything available in the workspace (both schemas)
+const available = await loader.discoverTools();
 ```
 
-Should be updated to:
-```typescript
-async initialize() {
-  // Create tool.v1 breadcrumb
-  await this.createToolBreadcrumb();
-  
-  // Start listening for requests
-  await this.startListening();
-}
+For `tool.v1` breadcrumbs with `implementation.type === 'builtin'`, `ToolLoader` dynamically
+imports the named module (e.g. `@rcrt-builder/tools`) and walks `implementation.export`
+(dot or bracket notation, e.g. `builtinTools['file-storage']`) to find the tool, instantiating
+it if `implementation.instantiate` is true.
 
-private async createToolBreadcrumb() {
-  const toolDef = {
-    schema_name: 'tool.v1',
-    title: this.tool.name,
-    tags: ['tool', `tool:${this.tool.name}`, `category:${this.tool.category || 'general'}`],
-    context: {
-      name: this.tool.name,
-      version: this.tool.version || '1.0.0',
-      description: this.tool.description,
-      category: this.tool.category || 'general',
-      
-      definition: {
-        inputSchema: this.tool.inputSchema,
-        outputSchema: this.tool.outputSchema,
-        examples: this.tool.examples || []
-      },
-      
-      configuration: {
-        configurable: !!this.tool.configSchema,
-        configSchema: this.tool.configSchema,
-        currentConfig: await this.loadConfig()
-      },
-      
-      capabilities: {
-        async: true,
-        timeout: this.options.timeout || 30000,
-        retries: this.options.retries || 0
-      }
-    }
-  };
-  
-  await this.client.createBreadcrumb(toolDef);
-}
+For `tool.code.v1` breadcrumbs, `loadSelfContainedTool()` returns a stub `RCRTTool` whose
+`execute()` throws — actual execution for this format is routed through `DenoToolRuntime`,
+not through the stub.
+
+### Bootstrapping the catalog: `bootstrapTools` (`src/bootstrap-tools.ts`)
+
+```typescript
+import { bootstrapTools } from '@rcrt-builder/tools';
+
+await bootstrapTools(client, 'workspace:tools');
 ```
 
-### 2. Tool Interface Update
-Add examples to RCRTTool interface:
-```typescript
-export interface RCRTTool {
-  // ... existing fields ...
-  
-  examples?: Array<{
-    title: string;
-    input: any;
-    output: any;
-    explanation: string;
-  }>;
-  
-  configSchema?: JSONSchema;
-}
-```
+`bootstrapTools()` no longer creates `tool.v1` breadcrumbs for the built-in tools (that step is
+explicitly skipped — see the `🔧 Legacy tool.v1 bootstrap skipped` log line in the source). All
+tools are expected to already exist as `tool.code.v1` breadcrumbs, created out-of-band via
+`bootstrap-breadcrumbs/tools-self-contained/`. What `bootstrapTools()` actually does is call
+`updateToolCatalog()`, which:
 
-### 3. Registry Catalog Builder
-Update to search for tools:
-```typescript
-private async buildCatalogFromBreadcrumbs() {
-  // Search for all tool.v1 breadcrumbs
-  const toolBreadcrumbs = await this.client.searchBreadcrumbs({
-    schema_name: 'tool.v1',
-    tag: this.workspace
-  });
-  
-  // Get full details
-  const tools = await Promise.all(
-    toolBreadcrumbs.map(t => this.client.getBreadcrumb(t.id))
-  );
-  
-  // Build catalog
-  this.catalog = tools.map(t => ({
-    name: t.context.name,
-    description: t.context.description,
-    category: t.context.category,
-    version: t.context.version,
-    inputSchema: t.context.definition.inputSchema,
-    outputSchema: t.context.definition.outputSchema,
-    examples: t.context.definition.examples,
-    capabilities: t.context.capabilities,
-    status: 'active',
-    lastSeen: new Date().toISOString()
-  }));
-  
-  // Update catalog breadcrumb
-  await this.updateCatalog();
-}
-```
+1. Searches for `tool.code.v1` breadcrumbs tagged with the workspace.
+2. Fetches each one's full breadcrumb to read its metadata (`name`, `description`, `category`,
+   `input_schema`, `output_schema`, `examples`, `capabilities`).
+3. Builds a `tool.catalog.v1` context object from that list.
+4. Searches for an existing `tool.catalog.v1` breadcrumb for the workspace and updates it if
+   found, or creates a new one if not — there is no cached catalog breadcrumb ID kept between
+   calls; every call re-searches.
 
-### 4. Add Examples to Existing Tools
+### In-process built-ins: `builtinTools` (`src/index.ts`)
 
-Example for random tool:
-```typescript
-export const builtinTools = {
-  random: createTool(
-    'random',
-    'Generate random numbers',
-    { /* inputSchema */ },
-    { /* outputSchema */ },
-    async (input) => { /* execute */ },
-    // NEW: Add examples
-    [
-      {
-        title: "Single number",
-        input: { min: 1, max: 10 },
-        output: { numbers: [7] },
-        explanation: "Access with result.numbers[0]"
-      },
-      {
-        title: "Workflow usage",
-        input: { min: 0, max: 100 },
-        output: { numbers: [42] },
-        explanation: "In workflows: ${stepId.numbers[0]}"
-      }
-    ]
-  )
-};
-```
+`builtinTools` is a plain object exporting ready-made `RCRTTool` implementations by key:
+`agent-helper`, `file-storage`, `agent-loader`, `workflow`, `browser-context-capture`. These are
+what `implementation.export` in a `tool.v1` breadcrumb points at (e.g. `builtinTools.workflow`),
+and what a `tool.code.v1` breadcrumb's `export` field is expected to name if it uses the
+`builtin` implementation type.
 
-## Testing
+## Adding a new tool
 
-1. Start tools-runner
-2. Check for tool.v1 breadcrumbs
-3. Verify catalog aggregates correctly
-4. Test agent uses examples
-
-## Migration Path
-
-1. Add examples to tool definitions
-2. Update wrapper to create breadcrumbs
-3. Update catalog to search breadcrumbs
-4. Test with one tool first
-5. Migrate all tools
+1. Implement it as an `RCRTTool` (see `src/index.ts` for the interface) or via `createTool(...)`.
+2. Either add it to `builtinTools` in `src/index.ts`, or publish it as a self-contained
+   `tool.code.v1` breadcrumb (see `bootstrap-breadcrumbs/tools-self-contained/` for examples).
+3. Run `bootstrapTools(client, workspace)` (or wait for tools-runner's normal startup) so the
+   workspace's `tool.catalog.v1` picks it up.

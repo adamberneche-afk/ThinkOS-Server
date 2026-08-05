@@ -17,7 +17,7 @@ A comprehensive schema that captures:
 - **Extracted content**: Text, headings, links, images, metadata
 - **LLM hints**: Transforms raw data into clean, natural language for agents
 
-#### 2. **Page Context Tracker** (`src/background/page-context-tracker.ts`)
+#### 2. **Page Context Tracker** (`src/background/page-context-tracker-simple.js`)
 
 A background service that:
 - Creates/maintains a single living breadcrumb per extension instance
@@ -89,7 +89,7 @@ Result: Agents get clean, natural language perfect for reasoning!
 ## Files Created
 
 ### Implementation
-- ✅ `extension/src/background/page-context-tracker.ts` - Core tracker service
+- ✅ `extension/src/background/page-context-tracker-simple.js` - Core tracker service
 - ✅ `extension/src/background/index.js` - Integration (updated)
 
 ### Documentation
