@@ -1,5 +1,7 @@
 # RCRT Dashboard v2 🚀
 
+> This is the dashboard the root `docker-compose.yml`'s `dashboard` service actually deploys, superseding the earlier Rust/vanilla-JS dashboard at [`crates/rcrt-dashboard/`](../crates/rcrt-dashboard/README.md).
+
 **A modern React frontend that transforms the RCRT experience with self-configuration, real-time visualization, and smooth 2D/3D interactions.**
 
 ## 🎯 Vision

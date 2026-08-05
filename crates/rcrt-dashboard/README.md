@@ -1,5 +1,7 @@
 # RCRT Dashboard
 
+> **⚠️ Superseded**: The dashboard docker-compose.yml actually deploys is [`rcrt-dashboard-v2/`](../../rcrt-dashboard-v2/README.md) (see its Docker Deployment section below). This Rust/vanilla-JS dashboard still builds and runs standalone but isn't part of the deployed stack.
+
 A visual dashboard for viewing RCRT breadcrumbs as interactive node cards on a canvas.
 
 ## Features
