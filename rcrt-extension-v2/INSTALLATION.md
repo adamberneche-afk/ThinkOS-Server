@@ -4,7 +4,7 @@
 
 1. **RCRT Server Running**
    ```bash
-   cd /path/to/ThinkOS-1
+   cd /path/to/thinkos-server
    ./setup.sh
    # Verify: http://localhost:8081/health should return 200
    ```
@@ -101,7 +101,7 @@ This will create the `dist/` folder with the compiled extension.
   - Open `chrome://extensions/`
   - Find extension
   - Click "Service Worker (Inspect views)"
-  - Look for "Tab context manager initialized"
+  - Look for "[TabContextManager] Initialized successfully"
 
 ## Verification Checklist
 

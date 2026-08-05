@@ -1,6 +1,6 @@
 ## RCRT – Right Context, Right Time
 
-> **✨ Fully Portable**: Supports custom container prefixes for multi-deployment environments. See [PORTABLE_SETUP_README.md](PORTABLE_SETUP_README.md)
+> **✨ Fully Portable**: Supports custom container prefixes for multi-deployment environments.
 
 **Quick Start**: 
 ```bash
@@ -251,10 +251,10 @@ All packages → @rcrt-builder/core (shared types)
 #### **File Locations Quick Reference**
 | SDK Package | Main Entry | Registry/Manager | Config |
 |-------------|------------|------------------|---------|
-| **Core** | `packages/sdk/src/index.ts` | - | - |
-| **Tools** | `packages/tools/src/index.ts` | `src/registry.ts` | `src/langchain.ts` |
-| **Runtime** | `packages/runtime/src/index.ts` | `src/runtime-manager.ts` | agent/flow executors |
-| **Node** | `packages/node-sdk/src/index.ts` | `src/registry.ts` | `src/dev-server.ts` |
+| **Core** | `rcrt-visual-builder/packages/sdk/src/index.ts` | - | - |
+| **Tools** | `rcrt-visual-builder/packages/tools/src/index.ts` | `src/registry.ts` | `src/langchain.ts` |
+| **Runtime** | `rcrt-visual-builder/packages/runtime/src/index.ts` | `src/runtime-manager.ts` | agent/flow executors |
+| **Node** | `rcrt-visual-builder/packages/node-sdk/src/index.ts` | `src/registry.ts` | `src/dev-server.ts` |
 
 #### **When to Use Which SDK**
 
@@ -359,8 +359,8 @@ Endpoints include breadcrumbs CRUD, history, vector search, selector subscriptio
 - Common environment variables:
 - **Database/Bus**: `DB_URL`, `NATS_URL`
 - **Auth**: `AUTH_MODE=jwt|disabled`, `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_JWKS_URL`
-- **Embeddings**: `EMBED_PROVIDER=onnx|remote`, `EMBED_DIM=384`, `EMBED_MODEL_PATH`, `EMBED_TOKENIZER_PATH`
-- **Secrets**: `LOCAL_KEK_BASE64` or cloud KMS config (`KEK_PROVIDER`, `KEK_REF`)
+- **Embeddings**: `EMBED_DIM=384`, `EMBED_MODEL`, `EMBED_TOKENIZER`
+- **Secrets**: `LOCAL_KEK_BASE64`
 - **Owner/Agent**: `OWNER_ID`, `AGENT_ID`
 
 ### Deployment
@@ -415,7 +415,6 @@ Click "Seed Agentic Demo" → "Gaming" to see live UI updates via SSE as agents 
 **Reference:**
 - **[API Quick Reference](docs/QUICK_REFERENCE.md)** - API cheatsheet
 - **[Deployment Guide](docs/DEPLOYMENT.md)** - Setup and deployment
-- **[Tools Guide](docs/TOOLS_GUIDE.md)** - Create custom tools
 - **[Changelog](CHANGELOG.md)** - Version history
 
 **Component-Specific:**
@@ -528,14 +527,4 @@ curl -X POST http://localhost:8081/breadcrumbs -H 'Content-Type: application/jso
 Expected: Supervisor creates tasks → Researcher emits findings → Supervisor triggers Synthesizer → Synthesizer emits final → Supervisor patches the original `user_message` with `reply`.
 
 ### License
-Apache 2.0 (or your preferred license). Add a `LICENSE` file as appropriate.
-
-
-David@XELNAGAv2 MINGW64 ~/Documents/GitHub/breadcrums/rcrt-visual-builder/apps/agent-runner (main)
-$ npm run dev 2>&1
-David@XELNAGAv2 MINGW64 ~/Documents/GitHub/breadcrums (main)
-$ cd rcrt-visual-builder/apps/builder && pnpm -s dev --port 3000 | cat
-
-cd rcrt-visual-builder && pnpm --filter @rcrt-builder/sdk build
-
-curl -s -X POST http://localhost:3000/api/auth/token -H "Content-Type: application/json" -d "{}"
+Apache License 2.0 - see [LICENSE](./LICENSE).

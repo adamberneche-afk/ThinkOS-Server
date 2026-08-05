@@ -99,18 +99,15 @@ await client.createBreadcrumb({
   }
 });
 
-// Register with context-builder
-await client.createBreadcrumb({
-  schema_name: 'tool.request.v1',
-  tags: ['tool:request', 'workspace:tools'],
-  context: {
-    tool: 'context-builder',
-    input: {
-      action: 'register',
-      config_id: '<config-breadcrumb-id>'
-    }
-  }
-});
+// No separate "register" step is required. context-builder's `subscriptions.selectors`
+// already include `context.config.v1`, so creating the breadcrumb above is enough for
+// tools-runner to auto-create a tool.request.v1 and invoke the tool.
+//
+// NOTE: execute() does not branch on input.action today. Whatever triggers it
+// (a new context.config.v1, or a subscribed event like user.message.v1), it re-reads
+// ALL context.config.v1 breadcrumbs and updates agent.context.v1 for every consumer
+// found. Sending { action: 'register', config_id } as shown in older versions of this
+// doc has no special effect — the action field is currently ignored.
 ```
 
 **Agent Definition (simplified!):**
@@ -265,22 +262,9 @@ await client.createBreadcrumb({
 
 ### **1. Auto-Discovery**
 
-Context-builder watches for new `context.config.v1` breadcrumbs:
+**Not implemented as a standalone service** — there is no `startAutoDiscovery(client, workspace)` method on `ContextBuilderTool`, and Phase 3 ("Auto-Discovery Service") below is still unchecked.
 
-```typescript
-// In tools-runner or dedicated context-builder-runner
-contextBuilderTool.startAutoDiscovery(client, workspace);
-
-// Internally subscribes to:
-{
-  schema_name: 'context.config.v1',
-  any_tags: [workspace]
-}
-
-// When new config appears:
-// 1. Calls contextBuilderTool.execute({ action: 'register', config_id })
-// 2. Starts maintaining context for that consumer
-```
+What exists today: `ContextBuilderTool.subscriptions.selectors` already includes `{ schema_name: 'context.config.v1' }`, so tools-runner's normal event-to-tool-request wiring fires the tool whenever a new config is created — no dedicated discovery loop is needed for that part. What's missing is the rest of Phase 3: a standalone `context-builder-runner`, sharding, and explicit subscription to each config's own `update_triggers` (today the tool instead re-processes every `context.config.v1` breadcrumb on every trigger it receives — see the note above).
 
 ### **2. Per-Consumer Configuration**
 
@@ -379,7 +363,7 @@ Agent receives: agent.context.v1 event (pre-assembled!)
 ### **Phase 1: Basic Context-Builder** ✅
 - [x] Create `context-builder-tool.ts`
 - [x] Add to `builtinTools`
-- [x] Support register/update/get actions
+- [ ] Support register/update/get actions — `registerConsumer`/`updateContext`/`deregisterConsumer`/`listActiveContexts` exist as private methods but `execute()` never dispatches to them; it ignores `input.action` and always re-processes every `context.config.v1` breadcrumb
 
 ### **Phase 2: Agent Integration**
 - [ ] Modify `agent-executor.ts` to use agent.context.v1

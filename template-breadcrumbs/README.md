@@ -48,6 +48,20 @@ Teach about the template system itself.
 - Meta-patterns for self-documentation
 - Template system best practices
 
+### 5. API Guides (`guide.api.v1`)
+Document how to use a specific API or endpoint.
+
+**Example:** `context-view-usage-guide.json`
+- Shows how to use the context-view API
+- Documents request/response patterns
+
+### 6. Template/llm_hints Guides (`guide.template.v1`)
+Teach `llm_hints` usage directly through a template breadcrumb.
+
+**Example:** `llm-hints-guide.json`
+- Demonstrates `llm_hints` transform types and modes
+- Reference for writing new `llm_hints`
+
 ## How `llm_hints` Work
 
 Every template breadcrumb includes `llm_hints` that demonstrate self-documentation:
@@ -85,11 +99,11 @@ Every template breadcrumb includes `llm_hints` that demonstrate self-documentati
 ## Loading Templates
 
 ```bash
-# Load all templates into RCRT
-node load-template-breadcrumbs.js
+# Load all templates into RCRT (script lives at repo root, in scripts/)
+node ../scripts/load-template-breadcrumbs.js
 
 # Or import and use programmatically
-import { loadTemplateBreadcrumbs } from './load-template-breadcrumbs.js';
+import { loadTemplateBreadcrumbs } from '../scripts/load-template-breadcrumbs.js';
 await loadTemplateBreadcrumbs();
 ```
 
@@ -131,7 +145,7 @@ Then apply learned patterns when creating breadcrumbs.
 
 ## Next Steps
 
-1. Load templates: `node load-template-breadcrumbs.js`
+1. Load templates: `node ../scripts/load-template-breadcrumbs.js` (from `template-breadcrumbs/`)
 2. View in dashboard: http://localhost:8082
 3. Create breadcrumbs following template patterns
 4. Watch agents discover and apply patterns

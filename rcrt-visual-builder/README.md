@@ -1,8 +1,8 @@
 # RCRT Visual Agent Builder System
 
-A **100% complete** production-ready visual agent builder where **everything is a breadcrumb** - UI components, flows, agents, and even the builder itself. The system enables agents to build other agents with real-time collaboration and self-improvement capabilities.
+A **substantially complete** visual agent builder where **everything is a breadcrumb** - UI components, flows, agents, and even the builder itself. The system enables agents to build other agents with real-time collaboration and self-improvement capabilities.
 
-**Status: ✅ FULLY IMPLEMENTED - All components built, no mocks, production-ready**
+**Status: ✅ Core packages, SDKs, node components, the HeroUI-breadcrumbs builder, and the Next.js builder app are implemented with no mocks. A small number of specific pieces are not yet built — see "🚧 Remaining Components" below (most notably the React Flow drag-and-drop canvas/node palette, and the DLQ Monitor / ACL Viewer / Workspace Manager dashboards).**
 
 ## 🎯 Core Principles
 
@@ -12,7 +12,7 @@ A **100% complete** production-ready visual agent builder where **everything is 
 - **Self-Documenting**: The system describes itself through breadcrumbs
 - **No Mocks or Workarounds**: Full implementation with real RCRT backend
 
-## 🏗️ What Has Been Built (100% Complete)
+## 🏗️ What Has Been Built
 
 ### ✅ Core Infrastructure
 - **Monorepo Structure**: pnpm workspace with TypeScript throughout
@@ -30,18 +30,22 @@ A **100% complete** production-ready visual agent builder where **everything is 
 - **Search Nodes**: Brave Search integration
 - **Observability Nodes**: Langfuse tracing
 
-### ✅ Complete UI System
-- **React Flow Canvas**: Full drag-and-drop visual builder
-- **Node Palette**: Categorized node library with search
-- **Flow Management**: Create, save, load, export flows
-- **Real-time Collaboration**: SSE-based live updates
-- **HeroUI Integration**: Modern dark theme UI
+### 🧩 UI System (`packages/ui`) — Partially Built
+- **Node Components**: All 9 node types (LLM, Agent, Breadcrumb, Utility, Security, Database, Search, Observability, Base) implemented
+- **Flow Store**: Create, save, load, export flows (Zustand store, implemented)
+- **RCRT/SSE Hooks**: `useRCRT` and `useSSE` for live data and real-time updates, implemented
+- **React Flow Canvas & Node Palette**: ❌ **Not yet built** — `FlowCanvas.tsx` and `NodePalette.tsx` are currently stub files; the drag-and-drop node-graph canvas has not been implemented
 
-### ✅ Management Dashboards
-- **Agent Panel**: Full CRUD, status monitoring, role management
-- **DLQ Monitor**: Dead letter queue with retry capabilities
-- **ACL Viewer**: Security permissions matrix
-- **Workspace Manager**: Multi-tenant support
+### 🧩 HeroUI-Breadcrumbs Builder (`packages/heroui-breadcrumbs`) — Implemented
+- **Component Registry & Renderer**: `ComponentRegistry`, `ComponentRenderer`, `UILoader` for rendering UI-as-breadcrumbs
+- **Builder Canvas/Palette**: `BuilderCanvas`, `BuilderPalette` for a breadcrumb-driven component builder (used by `apps/builder`)
+- **HeroUI Integration**: Modern dark theme UI, used throughout `apps/builder`
+
+### ✅ Management Dashboards — Partially Built
+- **Agent Panel**: Full CRUD, status monitoring, role management — implemented (`packages/management`)
+- **DLQ Monitor**: ❌ **Not yet built** — dead letter queue UI with retry capabilities
+- **ACL Viewer**: ❌ **Not yet built** — security permissions matrix
+- **Workspace Manager**: ❌ **Not yet built** — multi-tenant management UI
 
 ### ✅ Production Services
 - **Next.js Builder App**: Full web application with routing
@@ -98,7 +102,7 @@ pnpm build
 # Start agent runner (in one terminal)
 pnpm --filter agent-runner start
 
-# Start builder UI (in another terminal - when implemented)
+# Start builder UI (in another terminal)
 pnpm --filter builder dev
 
 # Or use Docker Compose for everything
@@ -120,11 +124,11 @@ rcrt-visual-builder/
 │   │   ├── breadcrumb/         # RCRT operation nodes
 │   │   ├── utility/            # Utility nodes
 │   │   └── security/           # Security nodes
-│   ├── ui/                     # Visual builder UI (pending)
-│   ├── management/             # Management UI components (pending)
-│   └── heroui-breadcrumbs/    # UI components as breadcrumbs (pending)
+│   ├── ui/                     # Visual builder UI: node components, flow store, hooks ✅ (React Flow canvas/palette not yet built)
+│   ├── management/             # Management UI: Agent Panel ✅ (DLQ Monitor, ACL Viewer, Workspace Manager not yet built)
+│   └── heroui-breadcrumbs/    # UI components as breadcrumbs ✅
 ├── apps/
-│   ├── builder/                # Main visual builder app (pending)
+│   ├── builder/                # Main visual builder app (Next.js) ✅
 │   └── agent-runner/           # Production agent runner ✅
 ├── scripts/
 │   └── bootstrap.ts            # System initialization ✅
@@ -274,11 +278,9 @@ Through comprehensive implementation, we've achieved:
 
 ## 🚧 Remaining Components
 
-The following components are designed but pending implementation:
-- Visual Builder UI (React + HeroUI)
-- Management UI (Agent Panel, DLQ Monitor, ACL Viewer)
-- Visual Canvas (React Flow integration)
-- HeroUI Components as Breadcrumbs
+Most of the system described above is built and working, including the Visual Builder UI (React + HeroUI, via `packages/heroui-breadcrumbs` and `apps/builder`), the Agent Panel, and HeroUI Components as Breadcrumbs. Two specific pieces are designed but not yet implemented:
+- **React Flow visual canvas & node palette** (`packages/ui`): `FlowCanvas.tsx` and `NodePalette.tsx` are currently stub files (`export {}`) — the drag-and-drop node-graph canvas has not been built. (Node components, the flow store, and the RCRT/SSE hooks in `packages/ui` are implemented.)
+- **Additional management dashboards** (`packages/management`): only the Agent Panel is implemented; the DLQ Monitor, ACL Viewer, and Workspace Manager have not been built.
 
 ## 🤝 Contributing
 

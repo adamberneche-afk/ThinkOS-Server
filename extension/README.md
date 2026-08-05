@@ -1,5 +1,7 @@
 # RCRT Chat Browser Extension
 
+> **⚠️ Superseded**: This extension has been succeeded by [`rcrt-extension-v2/`](../rcrt-extension-v2/README.md), which the repo's root `README.md` links to as the current browser extension. This directory is kept for reference but isn't the one to build on for new work.
+
 Your AI assistant powered by Right Context Right Time, accessible directly from your browser.
 
 ## Features
@@ -83,8 +85,6 @@ The extension uses a modern dark theme:
 - **Typography**: Clean, readable text with proper contrast
 
 ## Troubleshooting
-
-See the main [RCRT Chat Setup Guide](../RCRT_CHAT_SETUP_GUIDE.md) for detailed troubleshooting steps.
 
 ### Common Issues
 

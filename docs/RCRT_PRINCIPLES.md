@@ -496,8 +496,7 @@ Everything else is composition:
 
 ### Further Reading
 
-- [System Architecture Overview](./SYSTEM_ARCHITECTURE_OVERVIEW.md)
+- [System Architecture](./SYSTEM_ARCHITECTURE.md)
 - [Bootstrap System](./BOOTSTRAP_SYSTEM.md)
 - [Quick Reference](./QUICK_REFERENCE.md)
-- [System Diagrams](./SYSTEM_DIAGRAMS.md)
 

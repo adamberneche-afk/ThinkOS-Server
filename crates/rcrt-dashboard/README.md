@@ -1,5 +1,7 @@
 # RCRT Dashboard
 
+> **⚠️ Superseded**: The dashboard docker-compose.yml actually deploys is [`rcrt-dashboard-v2/`](../../rcrt-dashboard-v2/README.md) (see its Docker Deployment section below). This Rust/vanilla-JS dashboard still builds and runs standalone but isn't part of the deployed stack.
+
 A visual dashboard for viewing RCRT breadcrumbs as interactive node cards on a canvas.
 
 ## Features
@@ -76,13 +78,7 @@ The dashboard will be available at `http://localhost:8082`
 
 ## Docker Deployment
 
-The dashboard is included in the main docker-compose.yml:
-
-```bash
-docker-compose up dashboard
-```
-
-This will start the dashboard on port 8082, connecting to the RCRT API service.
+This crate is **not** what the root `docker-compose.yml`'s `dashboard` service deploys - that service builds `rcrt-dashboard-v2/frontend` instead (see [rcrt-dashboard-v2/README.md](../../rcrt-dashboard-v2/README.md)). This Rust dashboard has its own `Dockerfile` and is still a Cargo workspace member, but it isn't wired into the compose stack. To run it, build and run the binary directly (see Development above), or add your own compose service pointing at this crate's `Dockerfile` if you want it running alongside the rest of the stack.
 
 ## Authentication
 

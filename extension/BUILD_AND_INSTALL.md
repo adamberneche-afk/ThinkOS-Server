@@ -11,7 +11,7 @@ The extension has been successfully built with the browser context tracking feat
 1. Open Chrome and go to: `chrome://extensions/`
 2. Enable **"Developer mode"** (toggle in top-right)
 3. Click **"Load unpacked"**
-4. Navigate to: `D:\breadcrums\extension\dist`
+4. Navigate to this repo's `extension/dist` folder
 5. Select the `dist` folder
 
 ### 2. Verify Installation
@@ -156,6 +156,4 @@ dist/
 **Status**: 🟢 Ready to use!
 
 For detailed documentation, see:
-- [Technical Spec](../docs/BROWSER_CONTEXT_BREADCRUMB.md)
 - [Quick Start](../examples/BROWSER_CONTEXT_QUICKSTART.md)
-- [Architecture](../docs/BROWSER_CONTEXT_ARCHITECTURE.md)

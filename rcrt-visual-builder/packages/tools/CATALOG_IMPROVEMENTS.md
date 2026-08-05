@@ -8,25 +8,30 @@ Previously, the tool system had a design flaw where:
 - ❌ No single source of truth for tool discovery
 - ❌ Inefficient for agents to query multiple breadcrumbs
 
-## Solution Implemented
+## Solution Implemented (current: `src/bootstrap-tools.ts`)
 
 ### ✅ Single Catalog Breadcrumb Approach
 
 **Key Changes:**
 
-1. **Catalog Persistence**: Added `catalogBreadcrumbId` tracking to maintain a single catalog breadcrumb per workspace
+1. **tool.code.v1, not tool.v1/tool.definition.v1**: `bootstrapTools()` explicitly skips creating
+   `tool.v1` breadcrumbs for built-ins now (see the `🔧 Legacy tool.v1 bootstrap skipped — all
+   tools are now tool.code.v1` log line). The catalog is built exclusively from `tool.code.v1`
+   breadcrumbs tagged with the workspace; `tool.definition.v1` is not used at all.
 
-2. **Initialization Logic**: `initializeCatalog()` method that:
-   - Searches for existing catalog breadcrumb on startup
-   - Loads existing tools from catalog if found
-   - Creates new catalog only if none exists
+2. **No cached catalog ID**: There is no `catalogBreadcrumbId` field or `initializeCatalog()`
+   method. The actual function, `updateToolCatalog(client, workspace)` (private to
+   `bootstrap-tools.ts`, called from `bootstrapTools()`), searches for the existing
+   `tool.catalog.v1` breadcrumb for the workspace on every call and creates one only if the
+   search comes back empty — there's nothing persisted in memory between calls.
 
-3. **Update Instead of Create**: `updateCatalog()` method that:
-   - Updates the existing catalog breadcrumb via PATCH
-   - Uses optimistic concurrency control (If-Match header)
-   - Recreates catalog if original was deleted externally
+3. **Update Instead of Create**: When a `tool.catalog.v1` is found, `updateToolCatalog()` updates
+   it via `client.updateBreadcrumb(id, version, { context })` (optimistic concurrency via the
+   breadcrumb's `version`/If-Match). If none is found, it creates one fresh — the same
+   search-then-create path handles the "recreate if deleted externally" case too, since there's
+   no separate recovery branch.
 
-4. **Removed Individual Definitions**: Eliminated `tool.definition.v1` breadcrumbs in favor of centralized catalog
+4. **Removed Individual Definitions**: `tool.definition.v1` breadcrumbs are not created; catalog entries are read directly off each `tool.code.v1` breadcrumb's `context` (`name`, `description`, `category`, `version`, `input_schema`, `output_schema`, `examples`, `capabilities`).
 
 ## Result
 

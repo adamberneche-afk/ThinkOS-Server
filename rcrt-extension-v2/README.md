@@ -1,5 +1,7 @@
 # RCRT Browser Extension v2
 
+> This is the current browser extension, superseding the earlier [`extension/`](../extension/README.md) directory.
+
 Enterprise-grade browser extension powered by RCRT with semantic search, multi-tab context tracking, and real-time collaboration.
 
 ## Features
@@ -39,7 +41,7 @@ npm run build
 
 ## Architecture
 
-See [Design Document](../docs/RCRT_BROWSER_EXTENSION_V2_DESIGN.md) for complete architecture details.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for complete architecture details.
 
 ## Development
 

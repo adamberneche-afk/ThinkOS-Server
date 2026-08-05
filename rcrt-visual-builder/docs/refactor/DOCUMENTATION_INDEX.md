@@ -39,16 +39,15 @@ Choose the phase you're implementing:
 ### **🔍 Analysis Documents**
 | Document | Purpose | Key Insights |
 |----------|---------|--------------|
-| [Self-Bootstrapping Agents](SELF_BOOTSTRAPPING_AGENTS.md) | Complete autonomous agent ecosystem analysis | Shows pure breadcrumb-based architecture in action |
-| [Catalog Improvements](rcrt-visual-builder/packages/tools/CATALOG_IMPROVEMENTS.md) | Single tool catalog implementation | Demonstrates clean data management patterns |
-| [Dashboard Refactoring Summary](crates/rcrt-dashboard/REFACTORING_SUMMARY.md) | Code organization improvements | Shows 98% code reduction achievement |
+| [Catalog Improvements](../../packages/tools/CATALOG_IMPROVEMENTS.md) | Single tool catalog implementation | Demonstrates clean data management patterns |
+| [Dashboard Refactoring Summary](../../../crates/rcrt-dashboard/REFACTORING_SUMMARY.md) | Code organization improvements | Shows 98% code reduction achievement |
 
 ### **📖 Technical Reference**
 | Document | Purpose | Key Information |
 |----------|---------|-----------------|
-| [OpenAPI Specification](docs/openapi.json) | Complete RCRT API reference | All endpoints, schemas, authentication |
-| [Tool System README](rcrt-visual-builder/packages/tools/README.md) | Tool development guide | How to create and manage tools |
-| [Tools Runner README](rcrt-visual-builder/apps/tools-runner/README.md) | Tool deployment guide | Docker, local, and Electron deployment |
+| [OpenAPI Specification](../../../docs/openapi.json) | Complete RCRT API reference | All endpoints, schemas, authentication |
+| [Tool System README](../../packages/tools/README.md) | Tool development guide | How to create and manage tools |
+| [Tools Runner README](../../apps/tools-runner/README.md) | Tool deployment guide | Docker, local, and Electron deployment |
 
 ---
 
@@ -56,27 +55,25 @@ Choose the phase you're implementing:
 
 ### **🚀 "I want to understand the complete vision"**
 1. [Executive Summary](EXECUTIVE_SUMMARY.md) - Overall vision and business impact
-2. [Self-Bootstrapping Agents](SELF_BOOTSTRAPPING_AGENTS.md) - Technical deep-dive with examples
-3. [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md) - How to build it
+2. [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md) - How to build it
 
 ### **🔧 "I'm implementing the tool system"**
 1. [Phase 1: Tool Ecosystem](PHASE_1_TOOL_ECOSYSTEM_REFACTOR.md) - Complete restructuring plan
-2. [Catalog Improvements](rcrt-visual-builder/packages/tools/CATALOG_IMPROVEMENTS.md) - Single catalog approach
-3. [Tool System README](rcrt-visual-builder/packages/tools/README.md) - Developer guide
+2. [Catalog Improvements](../../packages/tools/CATALOG_IMPROVEMENTS.md) - Single catalog approach
+3. [Tool System README](../../packages/tools/README.md) - Developer guide
 
 ### **🧠 "I'm working on LLM integration"**
 1. [Phase 2: LLM Tools](PHASE_2_LLM_TOOLS_INTEGRATION.md) - LLMs as tools strategy
-2. [OpenAPI Specification](docs/openapi.json) - API reference for integration
-3. [Tools Runner README](rcrt-visual-builder/apps/tools-runner/README.md) - Deployment patterns
+2. [OpenAPI Specification](../../../docs/openapi.json) - API reference for integration
+3. [Tools Runner README](../../apps/tools-runner/README.md) - Deployment patterns
 
 ### **🤖 "I'm building the agent system"**
 1. [Phase 3: Agent Templates](PHASE_3_AGENT_TEMPLATE_SYSTEM.md) - Template framework
 2. [Phase 4: Self-Bootstrap](PHASE_4_SELF_BOOTSTRAPPING_INFRASTRUCTURE.md) - Autonomous infrastructure
-3. [Self-Bootstrapping Agents](SELF_BOOTSTRAPPING_AGENTS.md) - Complete examples
 
 ### **🎨 "I'm creating the UI system"**
 1. [Phase 5: UI Auto-Gen](PHASE_5_UI_AUTO_GENERATION.md) - Interface generation
-2. [Dashboard Refactoring Summary](crates/rcrt-dashboard/REFACTORING_SUMMARY.md) - Clean architecture example
+2. [Dashboard Refactoring Summary](../../../crates/rcrt-dashboard/REFACTORING_SUMMARY.md) - Clean architecture example
 
 ---
 

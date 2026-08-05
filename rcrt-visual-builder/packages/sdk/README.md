@@ -24,8 +24,8 @@ manual.setToken(myJwt);
 CRUD
 ```ts
 const id = (await client.createBreadcrumb({ title: 'Hello', tags: ['workspace:x'], context: {} })).id;
-const brief = await client.getBreadcrumb(id);           // context view
-await client.updateBreadcrumb(id, brief.version, { title: 'World' });
+const full = await client.getBreadcrumb(id);            // fetches /breadcrumbs/:id/full
+await client.updateBreadcrumb(id, full.version, { title: 'World' });
 await client.deleteBreadcrumb(id);
 ```
 
@@ -55,8 +55,8 @@ Auth model
 - SSE: uses `access_token` query param in browsers; server accepts header or query
 
 Defaults
-- `getBreadcrumb` returns context view (safer); call `getBreadcrumbFull` for full view
-- `batchGet` defaults to context view
+- `getBreadcrumb` and `getBreadcrumbFull` are currently identical — both call `GET /breadcrumbs/:id/full`. There is no separate "context view" endpoint on the client; `getBreadcrumb` keeps its name for call-site compatibility, but it does not return a reduced/transformed view distinct from `getBreadcrumbFull`.
+- `batchGet(ids, view)` still accepts `'context' | 'full'`, but both values currently resolve to the same full-breadcrumb fetch under the hood
 
 Errors
 - Update requires `If-Match` version; the SDK populates it from current version

@@ -3,7 +3,7 @@
 ## One-Command Build
 
 ```bash
-cd /d/ThinkOS-1/desktop-build/installers/windows
+cd /path/to/thinkos-server/desktop-build/installers/windows
 ./build-windows.sh
 ```
 

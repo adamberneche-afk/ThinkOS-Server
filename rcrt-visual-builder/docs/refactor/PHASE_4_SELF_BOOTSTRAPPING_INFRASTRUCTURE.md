@@ -1,5 +1,7 @@
 # Phase 4: Master Supervisor Agent 🌱➡️🌳
-**Status: FOCUSED ON PRACTICAL SUPERVISOR** 🎯
+**Status: 📋 PLANNED** (not started — depends on Phase 3; see [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md))
+
+> **Note on scope vs. filename**: This file is named `PHASE_4_SELF_BOOTSTRAPPING_INFRASTRUCTURE.md`, reflecting the original, broader "self-bootstrapping infrastructure" concept from the roadmap. The content below has since been narrowed to a more concrete "Master Supervisor Agent" scope (per the title above) — a supervisor that spawns worker agents from templates, rather than a fully autonomous self-bootstrapping system. The filename has intentionally not been changed to preserve existing links from the Roadmap and Documentation Index.
 
 ## Overview  
 Create a **Master Supervisor Agent** that can spawn worker agents using templates, choose appropriate LLMs (OpenRouter/Ollama), and coordinate simple workflows. **Practical autonomy, not magic.**

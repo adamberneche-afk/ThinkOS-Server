@@ -451,5 +451,5 @@ Built with ❤️ by the RCRT team and contributors.
 
 ## License
 
-[Your License - Apache 2.0 or similar]
+Apache License 2.0 - see [LICENSE](./LICENSE).
 

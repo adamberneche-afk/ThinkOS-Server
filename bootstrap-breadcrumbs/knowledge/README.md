@@ -30,12 +30,18 @@ When a user sends a message like "How do I create a tool?":
 4. **Agent responds** using the knowledge to provide accurate, detailed answers
 
 ### 4. Blacklist (What's Excluded)
-The context-builder uses a **blacklist approach**, meaning it includes everything EXCEPT:
-- `system.health.v1` - System health metrics
-- `system.metric.v1` - Performance metrics
-- `tool.config.v1` - Tool configuration settings
-- `secret.v1` - Secrets (never exposed)
-- `system.startup.v1` - System startup events
+The context-builder uses a **blacklist approach**, meaning it includes everything EXCEPT the schemas listed in `system/context-blacklist.json`. As of that breadcrumb's `semantic_version` 1.3.0, it excludes 28 schemas (one, `template.v1`, is listed twice), including:
+- `system.health.v1`, `system.metric.v1`, `system.hygiene.v1` - Internal system/performance telemetry
+- `secret.v1` - Secrets and credentials (never exposed)
+- `system.startup.v1`, `system.bootstrap.v1` - System lifecycle events
+- `tool.config.v1`, `tool.code.v1`, `tool.catalog.v1`, `tool.request.v1`, `tool.response.v1` - Tool internals (already surfaced to agents via subscriptions)
+- `agent.def.v1`, `agent.catalog.v1`, `agent.context.v1` - Agent internals (prevents recursive context inclusion)
+- `schema.def.v1`, `context.blacklist.v1` - Schema/config metadata
+- `template.v1`, `template.base.v1`, `template.tool.v1`, `template.agent.v1`, `guide.template.v1` - Template/guide structural metadata
+- `ui.state.v1`, `ui.page.v1`, `page.layout.v1`, `theme.v1`, `ui.component.v1` - UI rendering metadata
+- `openrouter.models.catalog.v1` - Large models catalog dataset
+
+See `bootstrap-breadcrumbs/system/context-blacklist.json` for the full, authoritative list with reasons.
 
 **✅ `knowledge.v1` is NOT blacklisted** - It will always be available for semantic search!
 

@@ -99,8 +99,8 @@ After deployment:
 cd rcrt-dashboard-v2/frontend
 npm run build
 
-# Full rebuild
-docker-compose build frontend
-docker-compose up -d frontend
+# Full rebuild (the compose service for this frontend is named "dashboard", not "frontend")
+docker-compose build dashboard
+docker-compose up -d dashboard
 ```
 

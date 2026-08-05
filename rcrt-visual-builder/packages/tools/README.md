@@ -1,13 +1,12 @@
 # @rcrt-builder/tools
 
-Universal tool integration system for RCRT. Wraps any tool (LangChain, custom functions, external APIs) to work seamlessly with the RCRT breadcrumb ecosystem.
+Universal tool integration system for RCRT. Wraps any tool (custom functions, external APIs, self-contained `tool.code.v1` breadcrumbs) to work seamlessly with the RCRT breadcrumb ecosystem.
 
 ## Features
 
 - **Universal Interface**: Any tool can integrate via standardized schemas
-- **LangChain Bridge**: Automatic wrapper for 100+ LangChain tools
-- **Auto-Discovery**: Tools publish themselves for agent discovery
-- **UI Generation**: Auto-creates Visual Builder interfaces
+- **Self-contained tools**: `tool.code.v1` breadcrumbs carry their own code, loaded and run via `ToolLoader` / `DenoToolRuntime`
+- **Auto-Discovery**: Tools publish themselves (via the catalog) for agent discovery
 - **Multi-Environment**: Works in Docker, Node.js, browser, and Electron
 
 ## Quick Start
@@ -20,16 +19,21 @@ pnpm add @rcrt-builder/tools @rcrt-builder/sdk
 ### Basic Usage
 ```typescript
 import { createClient } from '@rcrt-builder/sdk';
-import { createToolRegistry, builtinTools } from '@rcrt-builder/tools';
+import { bootstrapTools, builtinTools, ToolLoader } from '@rcrt-builder/tools';
 
 const client = await createClient({ baseUrl: '/api/rcrt' });
-const registry = await createToolRegistry(client, 'workspace:tools', {
-  enableBuiltins: true,
-  enableLangChain: true,
-  enableUI: true
-});
 
-// Tools are now listening for tool.request.v1 breadcrumbs
+// Bootstraps/refreshes the workspace's single tool.catalog.v1 breadcrumb
+// from the tool.code.v1 breadcrumbs already present for that workspace.
+await bootstrapTools(client, 'workspace:tools');
+
+// Load a specific tool implementation by name (tries tool.code.v1, then
+// falls back to legacy tool.v1) or from a known breadcrumb ID.
+const loader = new ToolLoader(client, 'workspace:tools');
+const tool = await loader.loadToolByName('file-storage');
+
+// builtinTools exposes the in-process implementations directly, keyed by name
+// (see "Built-in Tools" below) — e.g. builtinTools['file-storage'].execute(...)
 ```
 
 ### Request Tool Execution
@@ -85,7 +89,10 @@ const weatherTool = createTool(
   }
 );
 
-await registry.register(weatherTool);
+// `createTool` produces a plain RCRTTool object. There is no registry to register it
+// with at runtime — to make it loadable, either add it to `builtinTools` in `index.ts`
+// (so `ToolLoader`'s `builtin` implementation type can find it), or publish a
+// `tool.code.v1` breadcrumb so `ToolLoader.loadToolFromBreadcrumb` can load it directly.
 ```
 
 ### Advanced Tool Class
@@ -135,33 +142,19 @@ class DatabaseTool implements RCRTTool {
   }
 }
 
-await registry.register(new DatabaseTool());
+// Same story here: instantiate the class, then add it to `builtinTools` or
+// publish it as a `tool.code.v1` breadcrumb — there is no `registry.register()` call.
 ```
-
-## LangChain Integration
-
-### Auto-Register LangChain Tools (with RCRT Secrets)
-```typescript
-// Keys are resolved by the registry via ensureSecrets during registration:
-// SERPAPI_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY, BRAVE_SEARCH_API_KEY, GOOGLE_SEARCH_API_KEY, GOOGLE_CSE_ID
-await registry.registerLangChainTools({
-  serpApiKey: /* resolved from RCRT Secrets by tools-runner */, 
-  openaiApiKey: /* resolved from RCRT Secrets by tools-runner */
-});
-```
-
-### Available LangChain Tools
-- **serpapi**: Web search via SerpAPI
-- **calculator**: Mathematical calculations
-- **web_browser**: Web page content extraction
-
-More tools are added automatically when LangChain is available.
 
 ## Built-in Tools
 
-- **echo**: Returns input unchanged (testing)
-- **timer**: Wait for specified seconds  
-- **random**: Generate random numbers
+`builtinTools` (exported from `src/index.ts`) currently contains:
+
+- **agent-helper**: Provides system guidance and documentation for LLM-based agents
+- **file-storage**: Stores and retrieves files as RCRT breadcrumbs (`FileStorageTool`)
+- **agent-loader**: Loads agent definitions (`AgentLoaderTool`)
+- **workflow**: Executes multi-step workflows with dependencies and parallel execution (`workflowOrchestrator`)
+- **browser-context-capture**: Captures browser context/page state (`browserContextCaptureTool`)
 
 ## Tool Discovery
 
@@ -204,28 +197,6 @@ console.log('Last updated:', toolCatalog?.context.lastUpdated);
 - ✅ **Real-time Updates**: Catalog updates when tools are added/removed
 - ✅ **Efficient Discovery**: Query one breadcrumb instead of many
 - ✅ **Version History**: See how tool availability changed over time
-
-## UI Integration
-
-When `enableUI: true`, tools automatically create Visual Builder components:
-
-```typescript
-// Auto-generated UI for each tool
-{
-  component_ref: 'ToolCard',
-  props: {
-    title: 'Calculator',
-    description: 'Perform mathematical calculations',
-    onSubmit: {
-      action: 'emit_breadcrumb',
-      payload: {
-        schema_name: 'tool.request.v1',
-        context: { tool: 'calculator', input: '${formData}' }
-      }
-    }
-  }
-}
-```
 
 ## Deployment
 

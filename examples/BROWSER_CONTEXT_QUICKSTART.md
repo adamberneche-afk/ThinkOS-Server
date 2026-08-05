@@ -234,7 +234,6 @@ open http://localhost:8082
 
 ## Resources
 
-- [Full Documentation](../docs/BROWSER_CONTEXT_BREADCRUMB.md)
-- [Extension Code](../extension/src/background/page-context-tracker.ts)
+- [Extension Code](../extension/src/background/page-context-tracker-simple.js)
 - [Example Agents](./agents/)
 - [RCRT Documentation](../README.md)
