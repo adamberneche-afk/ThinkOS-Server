@@ -1,0 +1,35 @@
+name: Ping CTO Hub
+on:
+  schedule:
+    - cron: '*/30 * * * *'   # -> debug
+    - cron: '0 0 * * 0'      # Sunday midnight -> refactor
+    - cron: '0 12 * * 3'     # Wednesday noon -> hunt
+  workflow_dispatch:
+
+jobs:
+  call-central-brain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine Mode
+        id: mode
+        run: |
+          case "${{ github.event.schedule }}" in
+            '0 0 * * 0') echo "mode=refactor" >> $GITHUB_OUTPUT ;;
+            '0 12 * * 3') echo "mode=hunt" >> $GITHUB_OUTPUT ;;
+            *) echo "mode=debug" >> $GITHUB_OUTPUT ;;
+          esac
+      - name: Send Payload to Hub
+        env:
+          VERCEL_URL: ${{ secrets.VERCEL_URL }}
+          # Only needed if the hub's Vercel deployment has Deployment
+          # Protection enabled - see README.md on the hub repo (Mothership).
+          VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
+        run: |
+          curl -X POST "${VERCEL_URL}/api/autonomous_agent" \
+            -H "Content-Type: application/json" \
+            -H "x-vercel-protection-bypass: ${VERCEL_BYPASS_TOKEN}" \
+            -d '{
+              "owner": "${{ github.repository_owner }}",
+              "repo": "${{ github.event.repository.name }}",
+              "mode": "${{ steps.mode.outputs.mode }}"
+            }'
