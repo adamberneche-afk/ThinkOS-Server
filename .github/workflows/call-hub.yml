@@ -1,23 +1,43 @@
 name: Ping CTO Hub
+# NOTE: The automatic schedule is disabled. This workflow was firing every 30
+# minutes (plus weekly refactor/hunt crons) with VERCEL_URL and
+# VERCEL_BYPASS_TOKEN unset - every run's "Send Payload to Hub" step failed
+# immediately on `curl: (3) URL rejected: No host part in the URL`, before any
+# network call was even attempted. That's a config gap, not a sign the hub
+# itself is broken: this repo has been onboarded as a Mothership spoke, but
+# the two secrets the hub's README documents were never actually set here, so
+# every scheduled run has failed since the day this workflow was added.
+#
+# Set VERCEL_URL (and VERCEL_BYPASS_TOKEN, only if the hub's deployment has
+# Vercel Deployment Protection enabled) as repo secrets, then restore the
+# `schedule:` trigger below (see Mothership's README.md for the hub setup
+# steps) - or point VERCEL_URL at the Apps Script alternative URL instead,
+# per Mothership's "Alternative: Deploy Without Vercel" section. Until then,
+# trigger manually via workflow_dispatch when you actually want a hub run.
 on:
-  schedule:
-    - cron: '*/30 * * * *'   # -> debug
-    - cron: '0 0 * * 0'      # Sunday midnight -> refactor
-    - cron: '0 12 * * 3'     # Wednesday noon -> hunt
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Mode to send to the hub'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - hunt
+          - refactor
 
 jobs:
   call-central-brain:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Determine Mode
         id: mode
         run: |
-          case "${{ github.event.schedule }}" in
-            '0 0 * * 0') echo "mode=refactor" >> $GITHUB_OUTPUT ;;
-            '0 12 * * 3') echo "mode=hunt" >> $GITHUB_OUTPUT ;;
-            *) echo "mode=debug" >> $GITHUB_OUTPUT ;;
-          esac
+          echo "mode=${{ inputs.mode }}" >> $GITHUB_OUTPUT
       - name: Send Payload to Hub
         env:
           VERCEL_URL: ${{ secrets.VERCEL_URL }}
