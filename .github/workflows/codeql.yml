@@ -54,12 +54,16 @@ jobs:
         - language: python
           build-mode: none
         # The Rust workspace (crates/rcrt-core, rcrt-server, rcrt-dashboard,
-        # rcrt-context-builder) is real, compiled code (see the repo's own
-        # Dockerfile, which cargo builds it) - unlike the other three
-        # languages here, Rust needs an actual build, so this uses
-        # autobuild rather than build-mode: none.
+        # rcrt-context-builder). FIXED: this originally used
+        # build-mode: autobuild on the assumption that a compiled
+        # language needs a real build step here, matching the repo's own
+        # Dockerfile (which does cargo build it) - but this PR's own
+        # CodeQL run (2.27.0) failed hard on that: "Rust does not support
+        # the autobuild build mode. Please try using one of the following
+        # build modes instead: none." Unlike C/C++/Java, CodeQL's Rust
+        # extractor doesn't need a real compile to do its analysis.
         - language: rust
-          build-mode: autobuild
+          build-mode: none
         # CodeQL supports the following values keywords for 'language': 'actions', 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'rust', 'swift'
         # Use `c-cpp` to analyze code written in C, C++ or both
         # Use 'java-kotlin' to analyze code written in Java, Kotlin or both
