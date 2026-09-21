@@ -1,0 +1,9 @@
+{
+  "_comment": "Per-repo configuration for the portfolio CI/CD floor - see the Mothership hub's CICD_FLOOR.md. Read ONLY by scripts/secrets-doctor.mjs today: this repo's doc-link-check.yml and doc-placeholder-check.yml are an earlier hand-port that hardcodes its own patterns and exclude paths rather than reading this file, so adding it does not change their behaviour. Bringing those two to the canonical byte-identical copies is separate, unstarted work. scripts/secrets-doctor.mjs is byte-identical to Mothership's copy and must not be edited locally - a change belongs upstream. The generated env block in .github/workflows/secrets-doctor.yml is rewritten by `node scripts/secrets-doctor.mjs --sync` and drift-gated on every pull request by its own `drift` job, which needs no test suite - this repo has none.",
+  "floorVersion": "1",
+  "doctor": {
+    "optionalSecrets": {
+      "VERCEL_BYPASS_TOKEN": "only needed if the Mothership hub's deployment has Vercel Deployment Protection enabled - see call-hub.yml."
+    }
+  }
+}

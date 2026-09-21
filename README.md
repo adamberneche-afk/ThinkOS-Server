@@ -528,3 +528,13 @@ Expected: Supervisor creates tasks → Researcher emits findings → Supervisor 
 
 ### License
 Apache License 2.0 - see [LICENSE](./LICENSE).
+
+## Floor check 10 — secrets-doctor
+
+`scripts/secrets-doctor.mjs` confirms every secret this repo's workflows reference is actually configured and non-empty. It is a **byte-identical copy** of the canonical file in the Mothership hub (see that repo's `CICD_FLOOR.md`) and must not be edited here — a change belongs upstream.
+
+This repo is the reason the drift gate lives in the workflow rather than in a test suite. It is a Rust project whose `package.json` carries dependencies and no scripts, so there is no Node test harness to wire a check into. `secrets-doctor.yml`'s `drift` job therefore runs on **every pull request**, reads only files, touches no secrets context at all, and fails if the generated env block has fallen behind the workflows in either direction. Regenerate it with `node scripts/secrets-doctor.mjs --sync`. The `probe` job runs on dispatch only and receives one boolean per secret — `${{ secrets.NAME != '' }}`, compared inside the expression — so a job is shipped only the secret it names and no value ever reaches the environment.
+
+Two secrets are in scope, both from `call-hub.yml`: `VERCEL_URL`, which is required, and `VERCEL_BYPASS_TOKEN`, declared optional in `.github/floor.json` because it is only needed if the hub's deployment has Vercel Deployment Protection enabled.
+
+`.github/floor.json` is new and is read **only** by this check today. The `doc-link-check.yml` and `doc-placeholder-check.yml` already here are an earlier hand-port that hardcodes its own patterns and exclude paths, so adding the file does not change their behaviour. Bringing those two to the canonical byte-identical copies is separate, unstarted work, as are floor checks 3, 4, 6 and 9.
